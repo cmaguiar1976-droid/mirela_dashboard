@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirela Confecções — Comparativo Tributário</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1a18;
+    --text2: #6b6a62;
+    --text3: #9e9d94;
+    --blue: #2563EB;
+    --blue-bg: #EFF4FF;
+    --blue-text: #1d4ed8;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-text: #15803d;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-text: #b91c1c;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --amber-text: #b45309;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); }
+
+  body { min-height: 100vh; }
+
+  .page { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* Header */
+  .header { margin-bottom: 40px; }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
+  .company { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 44px; height: 44px; background: var(--text); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .logo svg { width: 22px; height: 22px; fill: var(--bg); }
+  .company-name { font-size: 22px; font-weight: 600; letter-spacing: -.3px; }
+  .company-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
+  .header-badge { background: var(--surface); border: 1px solid var(--border2); border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: var(--text2); font-family: 'DM Mono', monospace; }
+
+  /* Tabs faixa */
+  .faixa-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 8px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
+  .tab { padding: 7px 18px; font-size: 13px; font-weight: 500; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--text2); transition: all .18s; font-family: 'DM Sans', sans-serif; }
+  .tab.active { background: var(--text); color: var(--bg); }
+  .tab:hover:not(.active) { background: var(--surface2); color: var(--text); }
+
+  /* Metric grid */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .metric-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 8px; }
+  .metric-val { font-size: 20px; font-weight: 600; letter-spacing: -.4px; line-height: 1.1; }
+  .metric-val.mono { font-family: 'DM Mono', monospace; font-size: 17px; }
+  .metric-tag { margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
+  .tag-green { background: var(--green-bg); color: var(--green-text); }
+  .tag-red { background: var(--red-bg); color: var(--red-text); }
+  .tag-blue { background: var(--blue-bg); color: var(--blue-text); }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 20px; }
+
+  /* Bar chart */
+  .chart-container { position: relative; width: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Regime selector */
+  .regime-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .rtab { padding: 6px 14px; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); border-radius: 99px; cursor: pointer; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .rtab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* Breakdown */
+  .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .bk-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .bk-lbl { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .bk-val { font-size: 14px; font-weight: 600; font-family: 'DM Mono', monospace; }
+  .bar-bg { background: var(--surface2); border-radius: 4px; height: 4px; margin-top: 8px; overflow: hidden; }
+  .bar-fill { height: 4px; border-radius: 4px; transition: width .5s ease; }
+
+  /* Totais row */
+  .totais-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .totais-item { padding: 12px 14px; background: var(--surface2); border-radius: var(--radius-sm); }
+  .totais-lbl { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .totais-val { font-size: 14px; font-weight: 600; font-family: 'DM Mono', monospace; }
+
+  /* Alíquotas */
+  .aliq-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .aliq-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .aliq-name { font-size: 14px; font-weight: 500; }
+  .aliq-sub { font-size: 12px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .aliq-pct { font-size: 28px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
+  .best-badge { background: var(--green-bg); color: var(--green-text); font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Note */
+  .note { font-size: 12px; color: var(--text3); margin-top: 28px; text-align: center; }
+
+  @media (max-width: 600px) {
+    .page { padding: 28px 16px 60px; }
+    .metric-val { font-size: 17px; }
+    .aliq-pct { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="company">
+        <div class="logo">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="company-name">Mirela Confecções</div>
+          <div class="company-sub">Simulação de regime tributário</div>
+        </div>
+      </div>
+      <div class="header-badge">Calculado com base na receita fiscal do PGDAS</div>
+    </div>
+  </div>
+
+  <!-- Faixa selector -->
+  <div class="faixa-label">Faixa de faturamento anual</div>
+  <div class="tabs">
+    <button class="tab active" onclick="selectFaixa(0,this)">R$ 3,49 milhões</button>
+    <button class="tab" onclick="selectFaixa(1,this)">R$ 5,28 milhões</button>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics" id="metrics"></div>
+
+  <!-- Bar chart -->
+  <div class="card">
+    <div class="card-title">Total mensal de impostos por regime</div>
+    <div class="legend" id="legend"></div>
+    <div class="chart-container" id="chart-wrap">
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="card">
+    <div class="card-title">Detalhamento por tributo</div>
+    <div class="regime-tabs" id="regime-tabs"></div>
+    <div id="breakdown"></div>
+  </div>
+
+  <!-- Alíquotas -->
+  <div class="card">
+    <div class="card-title">Alíquota efetiva sobre a receita</div>
+    <div id="aliquotas"></div>
+  </div>
+
+  <div class="note">Simulação elaborada com base na receita fiscal declarada no PGDAS · Valores mensais médios</div>
+</div>
+
+<script>
+const DADOS = [
+  {
+    fat: 3496359.21,
+    regimes: [
+      {
+        nome: "Simples Nacional — ICMS no PGDAS",
+        nomeShort: "Simples Nacional",
+        total: 40561.21,
+        pct: 13.92,
+        cor: "#2563EB",
+        federal: 33977.71,
+        estadual: 4828.95,
+        trabalhista: 1754.55,
+        itens: {
+          "Revenda tributada": 291363.27,
+          "DAS SN trib. ICMS": 33977.71,
+          "ICMS equalização": 4828.95,
+          "INSS pró-labore": 825.82,
+          "IRRF pró-labore": 928.73,
+          "Pró-labore": 7507.49,
+          "Folha de salários": 25000.00,
+        }
+      }
+    ]
+  },
+  {
+    fat: 5285489.58,
+    regimes: [
+      {
+        nome: "Simples Nacional (global)",
+        nomeShort: "Simples Nacional",
+        total: 63028.93,
+        pct: 14.31,
+        cor: "#2563EB",
+        federal: 47791.30,
+        estadual: 13304.76,
+        trabalhista: 1932.86,
+        itens: {
+          "DAS SN trib. ICMS": 47791.30,
+          "ICMS equalização": 13304.76,
+          "INSS pró-labore": 1004.13,
+          "IRRF pró-labore": 928.73,
+          "Pró-labore": 9128.49,
+          "Folha de salários": 25000.00,
+        }
+      },
+      {
+        nome: "Lucro Presumido (global)",
+        nomeShort: "Lucro Presumido",
+        total: 74557.84,
+        pct: 16.93,
+        cor: "#dc2626",
+        federal: 27642.79,
+        estadual: 36456.49,
+        trabalhista: 10458.56,
+        itens: {
+          "Cofins (3%)": 13213.72,
+          "PIS (0,65%)": 2862.97,
+          "CSLL (1,08%)": 4756.94,
+          "IRPJ (1,2%)": 5285.49,
+          "Adic. IRPJ (10%)": 1523.66,
+          "ICMS normal (17%)": 36456.49,
+          "INSS pró-labore": 2829.83,
+          "IRRF pró-labore": 928.73,
+          "INSS patronal": 6700.00,
+        }
+      }
+    ]
+  }
+];
+
+let faixa = 0;
+let regimeSel = 0;
+let chartInst = null;
+
+const fmt = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+const fmtShort = v => {
+  if(v >= 1000000) return 'R$ ' + (v/1000000).toFixed(2).replace('.',',') + 'M';
+  if(v >= 1000) return 'R$ ' + (v/1000).toFixed(1).replace('.',',') + 'k';
+  return fmt(v);
+};
+
+function selectFaixa(i, el) {
+  faixa = i; regimeSel = 0;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function selectRegime(i) {
+  regimeSel = i;
+  renderBreakdown();
+  document.querySelectorAll('.rtab').forEach((t,j) => t.classList.toggle('active', j === i));
+}
+
+function render() {
+  renderMetrics();
+  renderChart();
+  renderRegimeTabs();
+  renderBreakdown();
+  renderAliquotas();
+}
+
+function renderMetrics() {
+  const d = DADOS[faixa];
+  const best = d.regimes.reduce((a,b) => a.total < b.total ? a : b);
+  let html = `
+    <div class="metric">
+      <div class="metric-lbl">Faturamento anual</div>
+      <div class="metric-val mono">${fmtShort(d.fat)}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">Menor carga mensal</div>
+      <div class="metric-val mono">${fmtShort(best.total)}</div>
+      <div class="metric-tag tag-green">${best.nomeShort}</div>
+    </div>`;
+  if(d.regimes.length > 1) {
+    const dif = d.regimes[1].total - d.regimes[0].total;
+    const difPct = (((d.regimes[1].total / d.regimes[0].total) - 1) * 100).toFixed(1);
+    html += `
+    <div class="metric">
+      <div class="metric-lbl">Economia mensal (SN vs LP)</div>
+      <div class="metric-val mono">${fmtShort(Math.abs(dif))}</div>
+      <div class="metric-tag tag-red">LP é ${difPct}% mais caro</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">Diferença anual</div>
+      <div class="metric-val mono">${fmtShort(Math.abs(dif) * 12)}</div>
+      <div class="metric-tag tag-blue">estimado</div>
+    </div>`;
+  } else {
+    html += `
+    <div class="metric">
+      <div class="metric-lbl">Alíquota efetiva</div>
+      <div class="metric-val">${best.pct.toFixed(2)}%</div>
+      <div class="metric-tag tag-blue">s/ receita fiscal</div>
+    </div>`;
+  }
+  document.getElementById('metrics').innerHTML = html;
+}
+
+function renderChart() {
+  const d = DADOS[faixa];
+  const labels = d.regimes.map(r => r.nomeShort);
+  const cores = ['#2563EB','#1D9E75','#9ca3af'];
+
+  document.getElementById('legend').innerHTML = `
+    <div class="legend-item"><span class="legend-dot" style="background:#2563EB"></span>Federal</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Estadual</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>Trabalhista</div>`;
+
+  const wrap = document.getElementById('chart-wrap');
+  const h = Math.max(140, d.regimes.length * 80 + 60);
+  wrap.style.height = h + 'px';
+
+  if(chartInst) { chartInst.destroy(); }
+  chartInst = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Federal', data: d.regimes.map(r => r.federal), backgroundColor: '#2563EB', borderRadius: 3 },
+        { label: 'Estadual', data: d.regimes.map(r => r.estadual), backgroundColor: '#1D9E75', borderRadius: 3 },
+        { label: 'Trabalhista', data: d.regimes.map(r => r.trabalhista), backgroundColor: '#9ca3af', borderRadius: 3 },
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw) }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { callback: v => 'R$ ' + Math.round(v/1000) + 'k', font: { size: 11, family: 'DM Mono' }, color: '#9e9d94' },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          border: { display: false }
+        },
+        y: {
+          stacked: true,
+          ticks: { font: { size: 13, family: 'DM Sans' }, color: '#1a1a18' },
+          grid: { display: false },
+          border: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function renderRegimeTabs() {
+  const d = DADOS[faixa];
+  document.getElementById('regime-tabs').innerHTML = d.regimes.map((r,i) =>
+    `<button class="rtab${i===regimeSel?' active':''}" onclick="selectRegime(${i})">${r.nomeShort}</button>`
+  ).join('');
+}
+
+function renderBreakdown() {
+  const r = DADOS[faixa].regimes[regimeSel];
+  const vals = Object.values(r.itens);
+  const max = Math.max(...vals);
+  let html = '<div class="breakdown-grid">';
+  Object.entries(r.itens).forEach(([k,v]) => {
+    const pct = Math.round((v/max)*100);
+    html += `<div class="bk-item">
+      <div class="bk-lbl">${k}</div>
+      <div class="bk-val">${fmt(v)}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${r.cor}99"></div></div>
+    </div>`;
+  });
+  html += `</div>
+  <div class="totais-row">
+    <div class="totais-item"><div class="totais-lbl">Federal</div><div class="totais-val">${fmt(r.federal)}</div></div>
+    <div class="totais-item"><div class="totais-lbl">Estadual</div><div class="totais-val">${fmt(r.estadual)}</div></div>
+    <div class="totais-item"><div class="totais-lbl">Trabalhista</div><div class="totais-val">${fmt(r.trabalhista)}</div></div>
+    <div class="totais-item" style="border:1px solid ${r.cor}44;background:${r.cor}0d">
+      <div class="totais-lbl">Total mensal</div>
+      <div class="totais-val" style="color:${r.cor}">${fmt(r.total)}</div>
+    </div>
+  </div>`;
+  document.getElementById('breakdown').innerHTML = html;
+}
+
+function renderAliquotas() {
+  const d = DADOS[faixa];
+  const minPct = Math.min(...d.regimes.map(r => r.pct));
+  document.getElementById('aliquotas').innerHTML = d.regimes.map(r => `
+    <div class="aliq-row">
+      <div>
+        <div class="aliq-name">${r.nome}</div>
+        <div class="aliq-sub">${fmt(r.total)} / mês</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="aliq-pct" style="color:${r.cor}">${r.pct.toFixed(2)}%</div>
+        ${r.pct === minPct ? '<span class="best-badge">melhor</span>' : ''}
+      </div>
+    </div>`).join('');
+}
+
+render();
+</script>
+</body>
+</html>
