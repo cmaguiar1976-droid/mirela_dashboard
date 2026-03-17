@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mirela Confecções — Comparativo Tributário</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #f5f4f0;
     --surface: #ffffff;
@@ -30,88 +29,124 @@
     --amber: #d97706;
     --amber-bg: #fffbeb;
     --amber-text: #b45309;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-text: #6d28d9;
     --radius: 12px;
     --radius-sm: 8px;
   }
-
   html { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); }
-
   body { min-height: 100vh; }
-
-  .page { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+  .page { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
 
   /* Header */
-  .header { margin-bottom: 40px; }
-  .header-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
+  .header { margin-bottom: 36px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .company { display: flex; align-items: center; gap: 14px; }
-  .logo { width: 44px; height: 44px; background: var(--text); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-  .logo svg { width: 22px; height: 22px; fill: var(--bg); }
+  .logo { width: 46px; height: 46px; background: var(--text); border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo svg { width: 22px; height: 22px; }
   .company-name { font-size: 22px; font-weight: 600; letter-spacing: -.3px; }
-  .company-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
-  .header-badge { background: var(--surface); border: 1px solid var(--border2); border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: var(--text2); font-family: 'DM Mono', monospace; }
+  .company-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .header-badge { background: var(--surface); border: 1px solid var(--border2); border-radius: 99px; padding: 7px 16px; font-size: 12px; font-weight: 500; color: var(--text2); font-family: 'DM Mono', monospace; white-space: nowrap; }
 
-  /* Tabs faixa */
-  .faixa-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 8px; }
-  .tabs { display: flex; gap: 6px; margin-bottom: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
-  .tab { padding: 7px 18px; font-size: 13px; font-weight: 500; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--text2); transition: all .18s; font-family: 'DM Sans', sans-serif; }
-  .tab.active { background: var(--text); color: var(--bg); }
-  .tab:hover:not(.active) { background: var(--surface2); color: var(--text); }
+  /* Section label */
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--text3); margin-bottom: 10px; }
 
-  /* Metric grid */
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  /* Base selector */
+  .base-selector { display: flex; gap: 14px; margin-bottom: 32px; flex-wrap: wrap; }
+  .base-card { flex: 1; min-width: 220px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 20px; cursor: pointer; transition: all .18s; }
+  .base-card:hover { border-color: var(--border2); }
+  .base-card.active-fiscal { border-color: var(--blue); background: var(--blue-bg); }
+  .base-card.active-real { border-color: var(--purple); background: var(--purple-bg); }
+  .base-card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .base-card.active-fiscal .base-card-label { color: var(--blue-text); }
+  .base-card.active-real .base-card-label { color: var(--purple-text); }
+  .base-card:not(.active-fiscal):not(.active-real) .base-card-label { color: var(--text3); }
+  .base-card-val { font-size: 24px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
+  .base-card.active-fiscal .base-card-val { color: var(--blue); }
+  .base-card.active-real .base-card-val { color: var(--purple); }
+  .base-card:not(.active-fiscal):not(.active-real) .base-card-val { color: var(--text2); }
+  .base-card-desc { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  /* Metrics */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
   .metric-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 8px; }
-  .metric-val { font-size: 20px; font-weight: 600; letter-spacing: -.4px; line-height: 1.1; }
-  .metric-val.mono { font-family: 'DM Mono', monospace; font-size: 17px; }
+  .metric-val { font-size: 19px; font-weight: 600; letter-spacing: -.4px; font-family: 'DM Mono', monospace; }
   .metric-tag { margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
   .tag-green { background: var(--green-bg); color: var(--green-text); }
   .tag-red { background: var(--red-bg); color: var(--red-text); }
   .tag-blue { background: var(--blue-bg); color: var(--blue-text); }
+  .tag-amber { background: var(--amber-bg); color: var(--amber-text); }
+  .tag-purple { background: var(--purple-bg); color: var(--purple-text); }
 
-  /* Cards */
+  /* Card */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
-  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 20px; }
+  .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--text3); margin-bottom: 20px; }
 
-  /* Bar chart */
+  /* Chart */
   .chart-container { position: relative; width: 100%; }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
   .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
-  /* Regime selector */
+  /* Regime tabs */
   .regime-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-  .rtab { padding: 6px 14px; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); border-radius: 99px; cursor: pointer; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .rtab { padding: 6px 16px; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); border-radius: 99px; cursor: pointer; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
   .rtab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
   /* Breakdown */
-  .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 20px; }
   .bk-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
   .bk-lbl { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
   .bk-val { font-size: 14px; font-weight: 600; font-family: 'DM Mono', monospace; }
   .bar-bg { background: var(--surface2); border-radius: 4px; height: 4px; margin-top: 8px; overflow: hidden; }
   .bar-fill { height: 4px; border-radius: 4px; transition: width .5s ease; }
 
-  /* Totais row */
-  .totais-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+  /* Totais */
+  .totais-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; padding-top: 16px; border-top: 1px solid var(--border); }
   .totais-item { padding: 12px 14px; background: var(--surface2); border-radius: var(--radius-sm); }
   .totais-lbl { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
   .totais-val { font-size: 14px; font-weight: 600; font-family: 'DM Mono', monospace; }
 
   /* Alíquotas */
-  .aliq-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .aliq-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
   .aliq-row:last-child { border-bottom: none; padding-bottom: 0; }
   .aliq-name { font-size: 14px; font-weight: 500; }
   .aliq-sub { font-size: 12px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; }
-  .aliq-pct { font-size: 28px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
-  .best-badge { background: var(--green-bg); color: var(--green-text); font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .05em; }
+  .aliq-right { display: flex; align-items: center; gap: 10px; }
+  .aliq-pct { font-size: 30px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
+  .best-badge { background: var(--green-bg); color: var(--green-text); font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 99px; text-transform: uppercase; letter-spacing: .05em; }
 
-  /* Note */
-  .note { font-size: 12px; color: var(--text3); margin-top: 28px; text-align: center; }
+  /* Comparativo lado a lado */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .compare-col { border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .compare-col.col-fiscal { border-top: 3px solid var(--blue); }
+  .compare-col.col-real { border-top: 3px solid var(--purple); }
+  .compare-col-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .col-fiscal .compare-col-title { color: var(--blue-text); }
+  .col-real .compare-col-title { color: var(--purple-text); }
+  .compare-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; gap: 8px; }
+  .compare-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .compare-row-lbl { color: var(--text2); flex: 1; }
+  .compare-row-val { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 13px; }
+  .compare-row.highlight { background: var(--surface2); margin: 0 -4px; padding: 8px 4px; border-radius: 6px; border-bottom: none; margin-top: 6px; }
+  .compare-row.highlight .compare-row-val { font-size: 15px; font-weight: 600; }
+  .col-fiscal .compare-row.highlight .compare-row-val { color: var(--blue); }
+  .col-real .compare-row.highlight .compare-row-val { color: var(--purple); }
 
-  @media (max-width: 600px) {
-    .page { padding: 28px 16px 60px; }
-    .metric-val { font-size: 17px; }
-    .aliq-pct { font-size: 22px; }
+  /* Diff badge */
+  .diff-box { background: var(--amber-bg); border: 1px solid rgba(217,119,6,.2); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .diff-icon { font-size: 22px; }
+  .diff-text { font-size: 13px; color: var(--amber-text); line-height: 1.5; flex: 1; }
+  .diff-text strong { font-weight: 600; }
+
+  .note { font-size: 12px; color: var(--text3); margin-top: 28px; text-align: center; line-height: 1.6; }
+
+  @media (max-width: 640px) {
+    .page { padding: 24px 14px 60px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .aliq-pct { font-size: 24px; }
+    .base-selector { flex-direction: column; }
   }
 </style>
 </head>
@@ -120,40 +155,57 @@
 
   <!-- Header -->
   <div class="header">
-    <div class="header-top">
-      <div class="company">
-        <div class="logo">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <div>
-          <div class="company-name">Mirela Confecções</div>
-          <div class="company-sub">Simulação de regime tributário</div>
-        </div>
+    <div class="company">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5f4f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
       </div>
-      <div class="header-badge">Calculado com base na receita fiscal do PGDAS</div>
+      <div>
+        <div class="company-name">Mirela Confecções</div>
+        <div class="company-sub">Comparativo de regimes tributários</div>
+      </div>
     </div>
+    <div class="header-badge">Receita Fiscal × Receita Real</div>
   </div>
 
-  <!-- Faixa selector -->
-  <div class="faixa-label">Faixa de faturamento anual</div>
-  <div class="tabs">
-    <button class="tab active" onclick="selectFaixa(0,this)">R$ 3,49 milhões</button>
-    <button class="tab" onclick="selectFaixa(1,this)">R$ 5,28 milhões</button>
+  <!-- Base selector -->
+  <div class="section-label">Selecione a base de cálculo</div>
+  <div class="base-selector">
+    <div class="base-card active-fiscal" id="card-fiscal" onclick="selectBase('fiscal')">
+      <div class="base-card-label">Receita Fiscal</div>
+      <div class="base-card-val">R$ 5,28M</div>
+      <div class="base-card-desc">Declarado no PGDAS · base original</div>
+    </div>
+    <div class="base-card" id="card-real" onclick="selectBase('real')">
+      <div class="base-card-label">Receita Real</div>
+      <div class="base-card-val">R$ 5,73M</div>
+      <div class="base-card-desc">Faturamento efetivo · base corrigida</div>
+    </div>
   </div>
 
   <!-- Metrics -->
   <div class="metrics" id="metrics"></div>
 
-  <!-- Bar chart -->
+  <!-- Aviso diferença -->
+  <div class="diff-box" id="diff-box"></div>
+
+  <!-- Comparativo lado a lado -->
   <div class="card">
-    <div class="card-title">Total mensal de impostos por regime</div>
+    <div class="card-title">Comparativo entre regimes — base selecionada</div>
+    <div class="compare-grid" id="compare-cols"></div>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="card">
+    <div class="card-title">Composição do total mensal por regime</div>
     <div class="legend" id="legend"></div>
     <div class="chart-container" id="chart-wrap">
       <canvas id="barChart"></canvas>
     </div>
   </div>
 
-  <!-- Breakdown -->
+  <!-- Detalhamento -->
   <div class="card">
     <div class="card-title">Detalhamento por tributo</div>
     <div class="regime-tabs" id="regime-tabs"></div>
@@ -166,37 +218,18 @@
     <div id="aliquotas"></div>
   </div>
 
-  <div class="note">Simulação elaborada com base na receita fiscal declarada no PGDAS · Valores mensais médios</div>
+  <div class="note">
+    Simulação elaborada com base nos demonstrativos fornecidos · Valores mensais médios<br>
+    Receita Fiscal: R$ 5.285.489,58/ano · Receita Real: R$ 5.736.977,14/ano
+  </div>
 </div>
 
 <script>
-const DADOS = [
-  {
-    fat: 3496359.21,
-    regimes: [
-      {
-        nome: "Simples Nacional — ICMS no PGDAS",
-        nomeShort: "Simples Nacional",
-        total: 40561.21,
-        pct: 13.92,
-        cor: "#2563EB",
-        federal: 33977.71,
-        estadual: 4828.95,
-        trabalhista: 1754.55,
-        itens: {
-          "Revenda tributada": 291363.27,
-          "DAS SN trib. ICMS": 33977.71,
-          "ICMS equalização": 4828.95,
-          "INSS pró-labore": 825.82,
-          "IRRF pró-labore": 928.73,
-          "Pró-labore": 7507.49,
-          "Folha de salários": 25000.00,
-        }
-      }
-    ]
-  },
-  {
+const DADOS = {
+  fiscal: {
     fat: 5285489.58,
+    label: "Receita Fiscal",
+    cor: "#2563EB",
     regimes: [
       {
         nome: "Simples Nacional (global)",
@@ -238,35 +271,84 @@ const DADOS = [
         }
       }
     ]
+  },
+  real: {
+    fat: 5736977.14,
+    label: "Receita Real",
+    cor: "#7c3aed",
+    regimes: [
+      {
+        nome: "Simples Nacional (global)",
+        nomeShort: "Simples Nacional",
+        total: 92825.76,
+        pct: 19.42,
+        cor: "#7c3aed",
+        federal: 59580.22,
+        estadual: 31312.68,
+        trabalhista: 1932.86,
+        itens: {
+          "DAS SN trib. ICMS": 59580.22,
+          "ICMS normal": 22836.87,
+          "ICMS equalização": 8475.81,
+          "INSS pró-labore": 1004.13,
+          "IRRF pró-labore": 928.73,
+          "Pró-labore": 9128.49,
+          "Folha de salários": 25000.00,
+        }
+      },
+      {
+        nome: "Lucro Presumido (global)",
+        nomeShort: "Lucro Presumido",
+        total: 83486.01,
+        pct: 17.46,
+        cor: "#dc2626",
+        federal: 30174.88,
+        estadual: 42852.57,
+        trabalhista: 10458.56,
+        itens: {
+          "Cofins (3%)": 14342.44,
+          "PIS (0,65%)": 3107.53,
+          "CSLL (1,08%)": 5163.28,
+          "IRPJ (1,2%)": 5736.98,
+          "Adic. IRPJ (10%)": 1824.65,
+          "ICMS normal (17%)": 42852.57,
+          "INSS pró-labore": 2829.83,
+          "IRRF pró-labore": 928.73,
+          "INSS patronal": 6700.00,
+        }
+      }
+    ]
   }
-];
+};
 
-let faixa = 0;
+let base = 'fiscal';
 let regimeSel = 0;
 let chartInst = null;
 
 const fmt = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
-const fmtShort = v => {
+const fmtM = v => {
   if(v >= 1000000) return 'R$ ' + (v/1000000).toFixed(2).replace('.',',') + 'M';
   if(v >= 1000) return 'R$ ' + (v/1000).toFixed(1).replace('.',',') + 'k';
   return fmt(v);
 };
 
-function selectFaixa(i, el) {
-  faixa = i; regimeSel = 0;
-  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+function selectBase(b) {
+  base = b; regimeSel = 0;
+  document.getElementById('card-fiscal').className = 'base-card' + (b==='fiscal' ? ' active-fiscal' : '');
+  document.getElementById('card-real').className = 'base-card' + (b==='real' ? ' active-real' : '');
   render();
 }
 
 function selectRegime(i) {
   regimeSel = i;
   renderBreakdown();
-  document.querySelectorAll('.rtab').forEach((t,j) => t.classList.toggle('active', j === i));
+  document.querySelectorAll('.rtab').forEach((t,j) => t.classList.toggle('active', j===i));
 }
 
 function render() {
   renderMetrics();
+  renderDiffBox();
+  renderCompareCols();
   renderChart();
   renderRegimeTabs();
   renderBreakdown();
@@ -274,58 +356,89 @@ function render() {
 }
 
 function renderMetrics() {
-  const d = DADOS[faixa];
+  const d = DADOS[base];
   const best = d.regimes.reduce((a,b) => a.total < b.total ? a : b);
-  let html = `
+  const worst = d.regimes.reduce((a,b) => a.total > b.total ? a : b);
+  const dif = worst.total - best.total;
+  const difPct = (((worst.total/best.total)-1)*100).toFixed(1);
+  document.getElementById('metrics').innerHTML = `
     <div class="metric">
       <div class="metric-lbl">Faturamento anual</div>
-      <div class="metric-val mono">${fmtShort(d.fat)}</div>
+      <div class="metric-val">${fmtM(d.fat)}</div>
+      <div class="metric-tag ${base==='fiscal'?'tag-blue':'tag-purple'}">${d.label}</div>
     </div>
     <div class="metric">
       <div class="metric-lbl">Menor carga mensal</div>
-      <div class="metric-val mono">${fmtShort(best.total)}</div>
+      <div class="metric-val">${fmtM(best.total)}</div>
       <div class="metric-tag tag-green">${best.nomeShort}</div>
-    </div>`;
-  if(d.regimes.length > 1) {
-    const dif = d.regimes[1].total - d.regimes[0].total;
-    const difPct = (((d.regimes[1].total / d.regimes[0].total) - 1) * 100).toFixed(1);
-    html += `
-    <div class="metric">
-      <div class="metric-lbl">Economia mensal (SN vs LP)</div>
-      <div class="metric-val mono">${fmtShort(Math.abs(dif))}</div>
-      <div class="metric-tag tag-red">LP é ${difPct}% mais caro</div>
     </div>
     <div class="metric">
-      <div class="metric-lbl">Diferença anual</div>
-      <div class="metric-val mono">${fmtShort(Math.abs(dif) * 12)}</div>
-      <div class="metric-tag tag-blue">estimado</div>
-    </div>`;
-  } else {
-    html += `
+      <div class="metric-lbl">Maior carga mensal</div>
+      <div class="metric-val">${fmtM(worst.total)}</div>
+      <div class="metric-tag tag-red">${worst.nomeShort}</div>
+    </div>
     <div class="metric">
-      <div class="metric-lbl">Alíquota efetiva</div>
-      <div class="metric-val">${best.pct.toFixed(2)}%</div>
-      <div class="metric-tag tag-blue">s/ receita fiscal</div>
+      <div class="metric-lbl">Diferença entre regimes</div>
+      <div class="metric-val">${fmtM(dif)}/mês</div>
+      <div class="metric-tag tag-amber">${difPct}% de diferença</div>
+    </div>`;
+}
+
+function renderDiffBox() {
+  const fiscal = DADOS.fiscal;
+  const real = DADOS.real;
+  // Diferença de faturamento e impacto no SN
+  const difFat = real.fat - fiscal.fat;
+  const difSN = real.regimes[0].total - fiscal.regimes[0].total;
+  const difLP = real.regimes[1].total - fiscal.regimes[1].total;
+  document.getElementById('diff-box').innerHTML = `
+    <div class="diff-icon">⚠️</div>
+    <div class="diff-text">
+      A <strong>Receita Real</strong> é <strong>${fmtM(difFat)}/ano</strong> maior que a Receita Fiscal.
+      No Simples Nacional, essa diferença representa <strong>+${fmtM(difSN)}/mês</strong> a mais em impostos.
+      No Lucro Presumido, o impacto é de <strong>${difLP > 0 ? '+' : ''}${fmtM(difLP)}/mês</strong> — 
+      ${difLP < 0 ? 'tornando-o mais vantajoso nessa base.' : 'elevando a carga total.'}
+    </div>`;
+}
+
+function renderCompareCols() {
+  const sn_f = DADOS.fiscal.regimes[0];
+  const lp_f = DADOS.fiscal.regimes[1];
+  const sn_r = DADOS.real.regimes[0];
+  const lp_r = DADOS.real.regimes[1];
+
+  function col(title, colorClass, r1, r2) {
+    return `<div class="compare-col ${colorClass}">
+      <div class="compare-col-title">${title}</div>
+      <div class="compare-row"><span class="compare-row-lbl">Simples Nacional</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Federal</span><span class="compare-row-val">${fmt(r1.federal)}</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Estadual</span><span class="compare-row-val">${fmt(r1.estadual)}</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Trabalhista</span><span class="compare-row-val">${fmt(r1.trabalhista)}</span></div>
+      <div class="compare-row highlight"><span class="compare-row-lbl">Total SN</span><span class="compare-row-val">${fmt(r1.total)}</span></div>
+      <div class="compare-row" style="margin-top:10px"><span class="compare-row-lbl">Lucro Presumido</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Federal</span><span class="compare-row-val">${fmt(r2.federal)}</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Estadual</span><span class="compare-row-val">${fmt(r2.estadual)}</span></div>
+      <div class="compare-row"><span class="compare-row-lbl">↳ Trabalhista</span><span class="compare-row-val">${fmt(r2.trabalhista)}</span></div>
+      <div class="compare-row highlight"><span class="compare-row-lbl">Total LP</span><span class="compare-row-val">${fmt(r2.total)}</span></div>
     </div>`;
   }
-  document.getElementById('metrics').innerHTML = html;
+
+  document.getElementById('compare-cols').innerHTML =
+    col('Receita Fiscal — R$ 5,28M/ano', 'col-fiscal', sn_f, lp_f) +
+    col('Receita Real — R$ 5,73M/ano', 'col-real', sn_r, lp_r);
 }
 
 function renderChart() {
-  const d = DADOS[faixa];
+  const d = DADOS[base];
   const labels = d.regimes.map(r => r.nomeShort);
-  const cores = ['#2563EB','#1D9E75','#9ca3af'];
-
   document.getElementById('legend').innerHTML = `
     <div class="legend-item"><span class="legend-dot" style="background:#2563EB"></span>Federal</div>
     <div class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Estadual</div>
     <div class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>Trabalhista</div>`;
 
   const wrap = document.getElementById('chart-wrap');
-  const h = Math.max(140, d.regimes.length * 80 + 60);
-  wrap.style.height = h + 'px';
-
-  if(chartInst) { chartInst.destroy(); }
+  wrap.style.height = Math.max(160, d.regimes.length * 90 + 60) + 'px';
+  if(chartInst) chartInst.destroy();
   chartInst = new Chart(document.getElementById('barChart'), {
     type: 'bar',
     data: {
@@ -342,22 +455,18 @@ function renderChart() {
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw) }
-        }
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw) } }
       },
       scales: {
         x: {
           stacked: true,
           ticks: { callback: v => 'R$ ' + Math.round(v/1000) + 'k', font: { size: 11, family: 'DM Mono' }, color: '#9e9d94' },
-          grid: { color: 'rgba(0,0,0,0.05)' },
-          border: { display: false }
+          grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false }
         },
         y: {
           stacked: true,
           ticks: { font: { size: 13, family: 'DM Sans' }, color: '#1a1a18' },
-          grid: { display: false },
-          border: { display: false }
+          grid: { display: false }, border: { display: false }
         }
       }
     }
@@ -365,14 +474,13 @@ function renderChart() {
 }
 
 function renderRegimeTabs() {
-  const d = DADOS[faixa];
-  document.getElementById('regime-tabs').innerHTML = d.regimes.map((r,i) =>
+  document.getElementById('regime-tabs').innerHTML = DADOS[base].regimes.map((r,i) =>
     `<button class="rtab${i===regimeSel?' active':''}" onclick="selectRegime(${i})">${r.nomeShort}</button>`
   ).join('');
 }
 
 function renderBreakdown() {
-  const r = DADOS[faixa].regimes[regimeSel];
+  const r = DADOS[base].regimes[regimeSel];
   const vals = Object.values(r.itens);
   const max = Math.max(...vals);
   let html = '<div class="breakdown-grid">';
@@ -398,15 +506,15 @@ function renderBreakdown() {
 }
 
 function renderAliquotas() {
-  const d = DADOS[faixa];
+  const d = DADOS[base];
   const minPct = Math.min(...d.regimes.map(r => r.pct));
   document.getElementById('aliquotas').innerHTML = d.regimes.map(r => `
     <div class="aliq-row">
       <div>
         <div class="aliq-name">${r.nome}</div>
-        <div class="aliq-sub">${fmt(r.total)} / mês</div>
+        <div class="aliq-sub">${fmt(r.total)} / mês · ${fmt(r.total * 12)} / ano</div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
+      <div class="aliq-right">
         <div class="aliq-pct" style="color:${r.cor}">${r.pct.toFixed(2)}%</div>
         ${r.pct === minPct ? '<span class="best-badge">melhor</span>' : ''}
       </div>
