@@ -142,6 +142,18 @@
 
   .note { font-size: 12px; color: var(--text3); margin-top: 28px; text-align: center; line-height: 1.6; }
 
+  /* Bloco informativo ICMS */
+  .info-box { border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 14px; }
+  .info-box.info-blue { background: var(--blue-bg); border: 1px solid rgba(37,99,235,.18); }
+  .info-box.info-purple { background: var(--purple-bg); border: 1px solid rgba(124,58,237,.18); }
+  .info-box-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-box-content { flex: 1; }
+  .info-box-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+  .info-blue .info-box-title { color: var(--blue-text); }
+  .info-purple .info-box-title { color: var(--purple-text); }
+  .info-box-text { font-size: 13px; line-height: 1.6; color: var(--text2); }
+  .info-box-text strong { font-weight: 600; color: var(--text); }
+
   @media (max-width: 640px) {
     .page { padding: 24px 14px 60px; }
     .compare-grid { grid-template-columns: 1fr; }
@@ -183,6 +195,9 @@
       <div class="base-card-desc">Faturamento efetivo · base corrigida</div>
     </div>
   </div>
+
+  <!-- Bloco informativo ICMS -->
+  <div id="info-icms"></div>
 
   <!-- Metrics -->
   <div class="metrics" id="metrics"></div>
@@ -346,6 +361,7 @@ function selectRegime(i) {
 }
 
 function render() {
+  renderInfoIcms();
   renderMetrics();
   renderDiffBox();
   renderCompareCols();
@@ -353,6 +369,36 @@ function render() {
   renderRegimeTabs();
   renderBreakdown();
   renderAliquotas();
+}
+
+function renderInfoIcms() {
+  const el = document.getElementById('info-icms');
+  if(base === 'fiscal') {
+    el.innerHTML = `
+      <div class="info-box info-blue">
+        <div class="info-box-icon">ℹ️</div>
+        <div class="info-box-content">
+          <div class="info-box-title">Recolhimento do ICMS — Receita Fiscal</div>
+          <div class="info-box-text">
+            Nesta base, <strong>todas as lojas permanecem recolhendo o ICMS dentro do Simples Nacional (DASN)</strong>,
+            ou seja, o imposto estadual é apurado e pago de forma unificada pelo DAS, sem separação por estabelecimento.
+          </div>
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="info-box info-purple">
+        <div class="info-box-icon">ℹ️</div>
+        <div class="info-box-content">
+          <div class="info-box-title">Recolhimento do ICMS — Receita Real</div>
+          <div class="info-box-text">
+            Nesta base, <strong>apenas uma das lojas continuará recolhendo o ICMS pelo DASN (Simples Nacional)</strong>.
+            As demais passam a recolher o ICMS fora do Simples, de forma separada — o que impacta diretamente
+            a composição da carga estadual e o total apurado no regime.
+          </div>
+        </div>
+      </div>`;
+  }
 }
 
 function renderMetrics() {
